@@ -28,13 +28,9 @@ jobs:
         with:
           cmd: yq -i '.on = "workflow_dispatch"' '.github/workflows/collect-input.yml'
 
-      - name: Commit and push files
-        if: ${{ steps.get_date.outputs.day == '26' }}
-        run: |
-          git add .
-          git commit -m "Turning off input collection"
-
       - name: Download input
+        id: download_input
+        if: ${{ env.SESSION != '' }}
         run: |
           url_day=$(echo $day | sed 's/^0*//')
           curl --cookie "session=${SESSION}" \
@@ -46,7 +42,14 @@ jobs:
           DAY: ${{ steps.get_date.outputs.day }}
           YEAR: ${{ steps.get_date.outputs.year }}
 
-      - name: Commit and push files
+      - name: Commit workflow changes
+        if: ${{ steps.get_date.outputs.day == '26' && steps.download_input.conclusion == 'success' }}
+        run: |
+          git add .github/workflows/collect-input.yml
+          git commit -m "Turning off input collection"
+
+      - name: Commit and push puzzle inputs
+        if: ${{ steps.download_input.conclusion == 'success' }}
         run: |
           git add .
           git commit -m "Adding today's puzzle input"
