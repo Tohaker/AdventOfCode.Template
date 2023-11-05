@@ -1,5 +1,7 @@
 # Advent Of Code Template
 
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
 Language agnostic template repository for Advent Of Code challenges, providing basic automation.
 
 ## Automations
